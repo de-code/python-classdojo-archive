@@ -14,7 +14,7 @@ class DojoFeedItemAttachmentMetadataJson(TypedDict):
 class DojoFeedItemAttachmentJson(TypedDict):
     path: str
     type: NotRequired[str]
-    metadata: DojoFeedItemAttachmentMetadataJson
+    metadata: NotRequired[DojoFeedItemAttachmentMetadataJson]
 
 
 class DojoFeedItemContentsJson(TypedDict):

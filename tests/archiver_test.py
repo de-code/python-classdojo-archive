@@ -34,6 +34,10 @@ IMAGE_ATTACHMENT_WITHOUT_FILENAME_JSON_1: DojoFeedItemAttachmentJson = {
     'metadata': IMAGE_ATTACHMENT_METADATA_WITHOUT_FILENAME_JSON_1
 }
 
+IMAGE_ATTACHMENT_WITHOUT_METADATA_JSON_1: DojoFeedItemAttachmentJson = {
+    'path': 'https://example.com/file1.jpg'
+}
+
 FEED_ITEM_JSON_1: DojoFeedItemJson = {
     '_id': 'id1',
     'time': '2023-01-02T03:04:05.678Z'
@@ -90,4 +94,19 @@ class TestFeedItemArchiver:
         assert feed_item_archiver.get_item_attachment_path(
             feed_item=feed_item,
             attachment_json=IMAGE_ATTACHMENT_WITHOUT_FILENAME_JSON_1
+        )
+
+    def test_should_support_attachment_without_metadata(
+        self,
+        feed_item_archiver: FeedItemArchiver
+    ):
+        feed_item = DojoFeedItem.from_item_json({
+            **FEED_ITEM_JSON_1,
+            'contents': {
+                'attachments': [IMAGE_ATTACHMENT_WITHOUT_METADATA_JSON_1]
+            }
+        })
+        assert feed_item_archiver.get_item_attachment_path(
+            feed_item=feed_item,
+            attachment_json=IMAGE_ATTACHMENT_WITHOUT_METADATA_JSON_1
         )

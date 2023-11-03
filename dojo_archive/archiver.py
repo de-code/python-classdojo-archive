@@ -30,8 +30,8 @@ class FeedItemArchiver:
         feed_item: DojoFeedItem,
         attachment_json: DojoFeedItemAttachmentJson
     ) -> Path:
-        metadata_json = attachment_json['metadata']
-        filename = metadata_json.get('filename')
+        metadata_json = attachment_json.get('metadata')
+        filename = metadata_json and metadata_json.get('filename')
         if not filename:
             filename = os.path.basename(attachment_json['path'])
         return self.item_attachments_dir_path.joinpath(
