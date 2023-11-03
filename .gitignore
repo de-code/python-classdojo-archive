@@ -1,0 +1,13 @@
+venv
+.mypy_cache
+.pytest_cache
+.temp
+.responses
+
+output
+images
+
+.env
+
+*.pyc
+cookies.json
