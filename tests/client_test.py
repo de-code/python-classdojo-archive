@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock
 
-import pytest
-
 from dojo_archive.client import DojoClient
 from dojo_archive.config import DojoConfig
 from dojo_archive.dojo_api_typing import DojoFeedItemJson, DojoFeedResponseJson
@@ -19,11 +17,6 @@ FEED_ITEM_JSON_1: DojoFeedItemJson = {
     '_id': 'id1',
     'time': '2023-01-02T03:04:05.678Z'
 }
-
-
-@pytest.fixture(name='requests_session_mock')
-def _requests_session_mock() -> MagicMock:
-    return MagicMock(name='requests_session')
 
 
 class TestDojoClient:

@@ -8,17 +8,18 @@ TimestampStr = str
 
 class DojoFeedItemAttachmentMetadataJson(TypedDict):
     mimetype: str
+    filename: str
 
 
 class DojoFeedItemAttachmentJson(TypedDict):
     path: str
-    type: str
+    type: NotRequired[str]
     metadata: DojoFeedItemAttachmentMetadataJson
 
 
 class DojoFeedItemContentsJson(TypedDict):
-    body: str
-    attachments: Sequence[DojoFeedItemAttachmentJson]
+    body: NotRequired[str]
+    attachments: NotRequired[Sequence[DojoFeedItemAttachmentJson]]
 
 
 class DojoFeedItemJson(TypedDict):

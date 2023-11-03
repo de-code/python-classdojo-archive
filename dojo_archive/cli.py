@@ -18,8 +18,11 @@ LOGGER = logging.getLogger(__name__)
 def run(config: DojoConfig):
     LOGGER.info('config: %r', config)
     cookies_file_path = Path(config.cookies_file)
-    archiver = FeedItemArchiver(output_dir=config.output_dir)
     with requests.Session() as session:
+        archiver = FeedItemArchiver(
+            output_dir=config.output_dir,
+            requests_session=session
+        )
         client = DojoClient(config=config, session=session)
         if cookies_file_path.exists():
             LOGGER.info('loading existing cookies')
