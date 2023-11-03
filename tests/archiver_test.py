@@ -25,6 +25,15 @@ PDF_ATTACHMENT_JSON_1: DojoFeedItemAttachmentJson = {
     'metadata': PDF_ATTACHMENT_METADATA_JSON_1
 }
 
+IMAGE_ATTACHMENT_METADATA_WITHOUT_FILENAME_JSON_1: DojoFeedItemAttachmentMetadataJson = {
+    'mimetype': 'image/jpeg'
+}
+
+IMAGE_ATTACHMENT_WITHOUT_FILENAME_JSON_1: DojoFeedItemAttachmentJson = {
+    'path': 'https://example.com/file1.jpg',
+    'metadata': IMAGE_ATTACHMENT_METADATA_WITHOUT_FILENAME_JSON_1
+}
+
 FEED_ITEM_JSON_1: DojoFeedItemJson = {
     '_id': 'id1',
     'time': '2023-01-02T03:04:05.678Z'
@@ -67,3 +76,18 @@ class TestFeedItemArchiver:
         )
         assert attachment_path.exists()
         assert attachment_path.read_bytes() == PDF_BYTES_1
+
+    def test_should_support_attachment_without_metadata_filename(
+        self,
+        feed_item_archiver: FeedItemArchiver
+    ):
+        feed_item = DojoFeedItem.from_item_json({
+            **FEED_ITEM_JSON_1,
+            'contents': {
+                'attachments': [IMAGE_ATTACHMENT_WITHOUT_FILENAME_JSON_1]
+            }
+        })
+        assert feed_item_archiver.get_item_attachment_path(
+            feed_item=feed_item,
+            attachment_json=IMAGE_ATTACHMENT_WITHOUT_FILENAME_JSON_1
+        )

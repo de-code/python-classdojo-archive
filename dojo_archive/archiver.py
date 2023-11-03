@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Iterable, Optional, Sequence
 
@@ -30,7 +31,9 @@ class FeedItemArchiver:
         attachment_json: DojoFeedItemAttachmentJson
     ) -> Path:
         metadata_json = attachment_json['metadata']
-        filename = metadata_json['filename']
+        filename = metadata_json.get('filename')
+        if not filename:
+            filename = os.path.basename(attachment_json['path'])
         return self.item_attachments_dir_path.joinpath(
             f'{feed_item.time.date().isoformat()}-{feed_item.item_id}-{filename}'
         )
