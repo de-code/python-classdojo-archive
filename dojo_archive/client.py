@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, cast
 
 import requests
 
@@ -54,11 +54,21 @@ class DojoClient:
         }))
         response.raise_for_status()
 
+    def iter_feed_response_json(self) -> Iterable[DojoFeedResponseJson]:
+        current_page_url = self.config.feed_url
+        while True:
+            response = self.on_response(self.session.get(current_page_url))
+            response.raise_for_status()
+            response_json: DojoFeedResponseJson = response.json()
+            yield response_json
+            links = response_json.get('_links')
+            prev = links and links.get('prev')
+            prev_href = prev and prev.get('href')
+            if not prev_href:
+                return
+            current_page_url = cast(str, prev_href)
+
     def iter_feed_items(self) -> Iterable[DojoFeedItem]:
-        response = self.on_response(self.session.get(self.config.feed_url))
-        response.raise_for_status()
-        response_json: DojoFeedResponseJson = response.json()
-        return [
-            DojoFeedItem.from_item_json(item_json)
-            for item_json in response_json['_items']
-        ]
+        for response_json in self.iter_feed_response_json():
+            for item_json in response_json['_items']:
+                yield DojoFeedItem.from_item_json(item_json)

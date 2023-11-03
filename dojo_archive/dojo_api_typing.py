@@ -35,5 +35,15 @@ class DojoFeedItemJson(TypedDict):
     contents: NotRequired[DojoFeedItemContentsJson]
 
 
+class DojoFeedLinkJson(TypedDict):
+    href: str
+
+
+class DojoFeedLinksJson(TypedDict):
+    prev: NotRequired[DojoFeedLinkJson]
+    next: NotRequired[DojoFeedLinkJson]
+
+
 class DojoFeedResponseJson(TypedDict):
     _items: Sequence[DojoFeedItemJson]
+    _links: NotRequired[DojoFeedLinksJson]
