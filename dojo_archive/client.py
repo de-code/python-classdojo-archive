@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,6 +10,9 @@ import requests
 from dojo_archive.config import DojoConfig
 from dojo_archive.dojo_api_typing import DojoFeedResponseJson
 from dojo_archive.model import DojoFeedItem
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class LoggedOutException(RuntimeError):
@@ -24,6 +28,12 @@ class DojoClient:
         self.debug_response_counter = 0
         if self.config.debug_response_dir:
             Path(self.config.debug_response_dir).mkdir(parents=True, exist_ok=True)
+        self.min_timestamp = datetime(
+            year=config.min_date.year,
+            month=config.min_date.month,
+            day=config.min_date.day,
+            tzinfo=timezone.utc
+        )
 
     def on_response(self, response: requests.Response) -> requests.Response:
         if self.config.debug_response_dir:
@@ -71,4 +81,8 @@ class DojoClient:
     def iter_feed_items(self) -> Iterable[DojoFeedItem]:
         for response_json in self.iter_feed_response_json():
             for item_json in response_json['_items']:
-                yield DojoFeedItem.from_item_json(item_json)
+                feed_item = DojoFeedItem.from_item_json(item_json)
+                LOGGER.debug('feed_item: %r', feed_item)
+                if feed_item.time < self.min_timestamp:
+                    return
+                yield feed_item

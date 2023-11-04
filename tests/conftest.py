@@ -1,6 +1,14 @@
+import logging
 from unittest.mock import MagicMock
 
 import pytest
+
+
+@pytest.fixture(scope='session', autouse=True)
+def setup_logging():
+    logging.basicConfig(level='INFO')
+    for name in ['tests', 'dojo_archive']:
+        logging.getLogger(name).setLevel('DEBUG')
 
 
 @pytest.fixture(name='requests_response_mock')
