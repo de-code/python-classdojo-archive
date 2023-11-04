@@ -27,6 +27,7 @@ class DojoConfig:  # pylint: disable=too-many-instance-attributes
     feed_url: str = "https://home.classdojo.com/api/storyFeed?includePrivate=true"
 
     cookies_file: str = 'cookies.json'
+    state_file: str = 'state.json'
     debug_response_dir: Optional[str] = '.responses'
 
     output_dir: str = 'output'

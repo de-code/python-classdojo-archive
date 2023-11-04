@@ -11,3 +11,4 @@ images
 
 *.pyc
 cookies.json
+state.json

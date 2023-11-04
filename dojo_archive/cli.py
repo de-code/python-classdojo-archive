@@ -18,6 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 def run(config: DojoConfig):
     LOGGER.info('config: %r', config)
+    state_file_path = Path(config.state_file)
     cookies_file_path = Path(config.cookies_file)
     min_timestamp = datetime(
         year=config.min_date.year,
@@ -25,6 +26,10 @@ def run(config: DojoConfig):
         day=config.min_date.day,
         tzinfo=timezone.utc
     )
+    if state_file_path.exists():
+        min_timestamp = datetime.fromisoformat(
+            json.loads(state_file_path.read_text('utf-8'))['min_timestamp']
+        )
     with requests.Session() as session:
         archiver = FeedItemArchiver(
             output_dir=config.output_dir,
@@ -45,11 +50,19 @@ def run(config: DojoConfig):
             client.login()
 
         feed_item_iterable = client.iter_feed_items()
-        archiver.archive_feed_items(feed_item_iterable)
+        for archived_feed_item in archiver.iter_archive_feed_items(
+            feed_item_iterable
+        ):
+            if archived_feed_item.time > min_timestamp:
+                min_timestamp = archived_feed_item.time
 
         LOGGER.info('cookies=%r', session.cookies.get_dict())
         cookies_file_path.write_text(
             json.dumps(session.cookies.get_dict()),
+            encoding='utf-8'
+        )
+        state_file_path.write_text(
+            json.dumps({'min_timestamp': min_timestamp.isoformat()}),
             encoding='utf-8'
         )
 

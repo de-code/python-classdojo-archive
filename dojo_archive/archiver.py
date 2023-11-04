@@ -80,6 +80,11 @@ class FeedItemArchiver:
                 attachment_json_list=feed_content_json.get('attachments')
             )
 
-    def archive_feed_items(self, feed_item_iterable: Iterable[DojoFeedItem]):
+    def iter_archive_feed_items(self, feed_item_iterable: Iterable[DojoFeedItem]):
         for feed_item in feed_item_iterable:
             self.archive_feed_item(feed_item)
+            yield feed_item
+
+    def archive_feed_items(self, feed_item_iterable: Iterable[DojoFeedItem]):
+        for _ in self.iter_archive_feed_items(feed_item_iterable):
+            pass
