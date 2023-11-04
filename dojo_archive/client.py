@@ -3,7 +3,7 @@ import logging
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, cast
+from typing import Iterable, Optional, cast
 
 import requests
 
@@ -20,20 +20,20 @@ class LoggedOutException(RuntimeError):
 
 
 class DojoClient:
-    def __init__(self, config: DojoConfig, session: requests.Session):
+    def __init__(
+        self,
+        config: DojoConfig,
+        session: requests.Session,
+        min_timestamp: Optional[datetime] = None
+    ):
         self.config = config
         self.session = session
+        self.min_timestamp = min_timestamp
         self.session_start = datetime.now(timezone.utc)
         self.debug_response_prefix = self.session_start.strftime(r'%Y%m%d-%H%M%S-')
         self.debug_response_counter = 0
         if self.config.debug_response_dir:
             Path(self.config.debug_response_dir).mkdir(parents=True, exist_ok=True)
-        self.min_timestamp = datetime(
-            year=config.min_date.year,
-            month=config.min_date.month,
-            day=config.min_date.day,
-            tzinfo=timezone.utc
-        )
 
     def on_response(self, response: requests.Response) -> requests.Response:
         if self.config.debug_response_dir:
@@ -83,6 +83,6 @@ class DojoClient:
             for item_json in response_json['_items']:
                 feed_item = DojoFeedItem.from_item_json(item_json)
                 LOGGER.debug('feed_item: %r', feed_item)
-                if feed_item.time < self.min_timestamp:
+                if self.min_timestamp and feed_item.time < self.min_timestamp:
                     return
                 yield feed_item

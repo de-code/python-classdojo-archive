@@ -1,5 +1,4 @@
-import dataclasses
-from datetime import date
+from datetime import date, datetime
 from unittest.mock import call, MagicMock
 
 from dojo_archive.client import DojoClient
@@ -97,11 +96,9 @@ class TestDojoClient:
         requests_session_mock: MagicMock
     ):
         client = DojoClient(
-            config=dataclasses.replace(
-                DOJO_CONFIG_1,
-                min_date=date.fromisoformat('2021-01-01')
-            ),
-            session=requests_session_mock
+            config=DOJO_CONFIG_1,
+            session=requests_session_mock,
+            min_timestamp=datetime.fromisoformat('2021-01-01T00:00:00+00:00')
         )
 
         item_after_min_date: DojoFeedItemJson = {

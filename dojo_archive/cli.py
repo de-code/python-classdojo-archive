@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import logging
 import sys
 import json
@@ -18,12 +19,22 @@ LOGGER = logging.getLogger(__name__)
 def run(config: DojoConfig):
     LOGGER.info('config: %r', config)
     cookies_file_path = Path(config.cookies_file)
+    min_timestamp = datetime(
+        year=config.min_date.year,
+        month=config.min_date.month,
+        day=config.min_date.day,
+        tzinfo=timezone.utc
+    )
     with requests.Session() as session:
         archiver = FeedItemArchiver(
             output_dir=config.output_dir,
             requests_session=session
         )
-        client = DojoClient(config=config, session=session)
+        client = DojoClient(
+            config=config,
+            session=session,
+            min_timestamp=min_timestamp
+        )
         if cookies_file_path.exists():
             LOGGER.info('loading existing cookies')
             session.cookies.update(json.loads(
