@@ -1,9 +1,20 @@
 VENV = venv
-PIP = $(VENV)/bin/pip
-PYTHON = $(VENV)/bin/python
+
+ifeq ($(OS),Windows_NT)
+	VENV_BIN = $(VENV)/Scripts
+else
+	VENV_BIN = $(VENV)/bin
+endif
+
+PYTHON = $(VENV_BIN)/python
+PIP = $(VENV_BIN)/python -m pip
+
+SYSTEM_PYTHON = python3
+
 
 ARGS =
 PYTEST_WATCH_MODULES =
+
 
 venv-clean:
 	@if [ -d "$(VENV)" ]; then \
@@ -12,7 +23,7 @@ venv-clean:
 
 
 venv-create:
-	python3 -m venv $(VENV)
+	$(SYSTEM_PYTHON) -m venv $(VENV)
 
 
 venv-activate:

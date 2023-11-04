@@ -1,0 +1,40 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'  # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.9', '3.10']
+        include:
+        - python-version: '3.9'
+          push-package: true
+        - os: windows-2019
+          python-version: '3.9'
+        - os: macos-latest
+          python-version: '3.9'
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          make dev-venv SYSTEM_PYTHON=python
+      - name: Lint
+        run: |
+          make dev-lint
+      - name: Unit Test
+        run: |
+          make dev-unittest
