@@ -3,7 +3,7 @@ PIP = $(VENV)/bin/pip
 PYTHON = $(VENV)/bin/python
 
 ARGS =
-PYTEST_WATCH_MODULES = .
+PYTEST_WATCH_MODULES =
 
 venv-clean:
 	@if [ -d "$(VENV)" ]; then \
@@ -46,7 +46,7 @@ dev-unittest:
 	$(PYTHON) -m pytest -p no:cacheprovider $(ARGS) tests
 
 dev-watch:
-	$(PYTHON) -m pytest_watcher --now $(ARGS) $(PYTEST_WATCH_MODULES)
+	$(PYTHON) -m pytest_watcher --now . $(ARGS) $(PYTEST_WATCH_MODULES)
 
 dev-test: dev-lint dev-unittest
 
