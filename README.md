@@ -1,6 +1,6 @@
 # Python Tapestry Archive
 
-This is inspired by [tapestry-archive](https://github.com/aldreth/tapestry-archive), written in Ruby.
+This is inspired by [dojo](https://github.com/espiegel/dojo), written in JavaScript.
 
 Download all the resources from your child's [classdojo](https://classdojo.com) account.
 
