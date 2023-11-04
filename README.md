@@ -1,4 +1,4 @@
-# Python Tapestry Archive
+# Python Dojo Archive
 
 This is inspired by [dojo](https://github.com/espiegel/dojo), written in JavaScript.
 
