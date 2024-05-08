@@ -63,11 +63,26 @@ class DojoClient:
             "resumeAddClassFlow": False
         }))
         response.raise_for_status()
+        LOGGER.info('Login successful, response=%r', response.text)
+        LOGGER.info('cookies=%r', self.session.cookies.get_dict())
+        # Note: cookies do not seem to take effect without updating them explicitly
+        self.session.cookies.update(self.session.cookies.get_dict())
+
+    def request_with_auto_login(self, *args, **kwargs) -> requests.Response:
+        response = self.session.request(*args, **kwargs)
+        if response.status_code == 401:
+            LOGGER.info('Unauthorized. Attempting to login...')
+            self.login()
+            LOGGER.info('Attempting previous request again  (after successful login)')
+            response = self.session.request(*args, **kwargs)
+        return response
 
     def iter_feed_response_json(self) -> Iterable[DojoFeedResponseJson]:
         current_page_url = self.config.feed_url
         while True:
-            response = self.on_response(self.session.get(current_page_url))
+            response = self.on_response(
+                self.request_with_auto_login(method='get', url=current_page_url)
+            )
             response.raise_for_status()
             response_json: DojoFeedResponseJson = response.json()
             yield response_json

@@ -51,14 +51,14 @@ class TestDojoClient:
             '_items': [FEED_ITEM_JSON_1]
         }
 
-        response_mock = requests_session_mock.get.return_value
+        response_mock = requests_session_mock.request.return_value
         response_mock.json.return_value = response_json
 
         feed_items = list(client.iter_feed_items())
         assert feed_items == [DojoFeedItem.from_item_json(FEED_ITEM_JSON_1)]
 
-        requests_session_mock.get.assert_called_with(
-            DOJO_CONFIG_1.feed_url
+        requests_session_mock.request.assert_called_with(
+            method='get', url=DOJO_CONFIG_1.feed_url
         )
         response_mock.raise_for_status.assert_called()
 
@@ -77,7 +77,7 @@ class TestDojoClient:
             '_items': [FEED_ITEM_JSON_2]
         }
 
-        response_mock = requests_session_mock.get.return_value
+        response_mock = requests_session_mock.request.return_value
         response_mock.json.side_effect = [response_json_1, response_json_2]
 
         feed_items = list(client.iter_feed_items())
@@ -86,9 +86,9 @@ class TestDojoClient:
             DojoFeedItem.from_item_json(FEED_ITEM_JSON_2)
         ]
 
-        requests_session_mock.get.assert_has_calls([
-            call(DOJO_CONFIG_1.feed_url),
-            call(PAGE_URL_2)
+        requests_session_mock.request.assert_has_calls([
+            call(method='get', url=DOJO_CONFIG_1.feed_url),
+            call(method='get', url=PAGE_URL_2)
         ])
 
     def test_should_stop_with_feed_item_before_min_date(
@@ -118,10 +118,10 @@ class TestDojoClient:
             }
         }
 
-        response_mock = requests_session_mock.get.return_value
+        response_mock = requests_session_mock.request.return_value
         response_mock.json.side_effect = [response_json]
 
         feed_items = list(client.iter_feed_items())
         assert feed_items == [DojoFeedItem.from_item_json(item_after_min_date)]
 
-        requests_session_mock.get.assert_called_once()
+        requests_session_mock.request.assert_called_once()
