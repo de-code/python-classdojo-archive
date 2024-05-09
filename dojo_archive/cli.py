@@ -53,8 +53,7 @@ def run(config: DojoConfig):
         for archived_feed_item in archiver.iter_archive_feed_items(
             feed_item_iterable
         ):
-            if archived_feed_item.time > min_timestamp:
-                min_timestamp = archived_feed_item.time
+            min_timestamp = max(min_timestamp, archived_feed_item.time)
 
         LOGGER.info('cookies=%r', session.cookies.get_dict())
         cookies_file_path.write_text(
