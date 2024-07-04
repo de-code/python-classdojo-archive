@@ -1,4 +1,4 @@
-flake8==7.0.0
+flake8==7.1.0
 pylint==3.2.5
 pytest==8.2.0
 pytest-watcher==0.4.2
