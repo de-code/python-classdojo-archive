@@ -61,6 +61,22 @@ class TestFeedItemArchiver:
         assert item_json_path.exists()
         assert json.loads(item_json_path.read_text('utf-8')) == FEED_ITEM_JSON_1
 
+    def test_should_strip_query_parameters(self, feed_item_archiver: FeedItemArchiver):
+        attachment_json: DojoFeedItemAttachmentJson = {
+            'path': 'https://example.com/file1.pdf?query=param'
+        }
+        feed_item = DojoFeedItem.from_item_json({
+            **FEED_ITEM_JSON_1,
+            'contents': {
+                'attachments': [attachment_json]
+            }
+        })
+        file_path = feed_item_archiver.get_item_attachment_path(
+            feed_item=feed_item,
+            attachment_json=attachment_json
+        )
+        assert file_path.name.endswith('file1.pdf')
+
     def test_should_write_pdf(
         self,
         feed_item_archiver: FeedItemArchiver,
