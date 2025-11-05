@@ -18,7 +18,7 @@ jobs:
         include:
         - python-version: '3.9'
           push-package: true
-        - os: windows-2019
+        - os: windows-2025
           python-version: '3.9'
         - os: macos-latest
           python-version: '3.9'
