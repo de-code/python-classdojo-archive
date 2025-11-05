@@ -34,6 +34,7 @@ class FeedItemArchiver:
         filename = metadata_json and metadata_json.get('filename')
         if not filename:
             filename = os.path.basename(attachment_json['path'])
+        filename = filename.split('?', maxsplit=1)[0]
         return self.item_attachments_dir_path.joinpath(
             f'{feed_item.time.date().isoformat()}-{feed_item.item_id}-{filename}'
         )
